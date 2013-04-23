@@ -25,7 +25,7 @@ a {
 }
 .calendar .week .day {
   width: 13.8%;
-  border-left: 1px solid #eee;
+  border-left: 1px solid #fff;
   margin-left: -1px;
 }
 .calendar .week .day .dnbr {
@@ -37,7 +37,7 @@ a {
 .calendar .week .day .shift {
   clear: both;
   min-height: 64px;
-  border-top: 1px solid #ccc;
+  border-top: 1px solid #fff;
 }
 .calendar .week .day .red {
   background-color: #ffa07a;
