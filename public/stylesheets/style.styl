@@ -1,0 +1,67 @@
+border-radius(n)
+  -webkit-border-radius n
+  -moz-border-radius n
+  border-radius n
+
+body
+  padding: 0
+  margin: 0
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif
+a
+  color: #00B7FF
+.calendar
+  width: 100%
+
+  .week
+    float: left
+    width: 100%
+    border-bottom: 1px solid #999
+
+    .wknbr,.day
+       float:left
+
+    .wknbr
+      width: 3.4%
+      font-size: 24px
+      color: silver
+
+    .day
+      width: 13.8%
+      border-left: 1px solid #EEE
+      margin-left: -1px
+
+      .dnbr
+        float: right
+
+      .name
+        float: left
+
+      .shift
+        clear: both
+        min-height: 64px
+        border-top: 1px solid #CCC
+      .red
+        background-color: lightsalmon
+      .orange
+        background-color: SandyBrown
+      .green
+        background-color: lightgreen
+
+      .shift
+        .manager
+          border: 1px solid white
+          border-radius(3px)
+          padding: 2px
+          margin: 2px
+          float: left
+          color: white
+        .available
+          background-color: green
+        .not-available
+          background-color: DarkRed
+
+      .shift-alert
+        background: lightcoral
+
+      .shift-ok
+        background: lightgreen

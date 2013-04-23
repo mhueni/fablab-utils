@@ -1,0 +1,72 @@
+body {
+  padding: 0;
+  margin: 0;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+a {
+  color: #00b7ff;
+}
+.calendar {
+  width: 100%;
+}
+.calendar .week {
+  float: left;
+  width: 100%;
+  border-bottom: 1px solid #999;
+}
+.calendar .week .wknbr,
+.calendar .week .day {
+  float: left;
+}
+.calendar .week .wknbr {
+  width: 3.4%;
+  font-size: 24px;
+  color: #c0c0c0;
+}
+.calendar .week .day {
+  width: 13.8%;
+  border-left: 1px solid #eee;
+  margin-left: -1px;
+}
+.calendar .week .day .dnbr {
+  float: right;
+}
+.calendar .week .day .name {
+  float: left;
+}
+.calendar .week .day .shift {
+  clear: both;
+  min-height: 64px;
+  border-top: 1px solid #ccc;
+}
+.calendar .week .day .red {
+  background-color: #ffa07a;
+}
+.calendar .week .day .orange {
+  background-color: SandyBrown;
+}
+.calendar .week .day .green {
+  background-color: #90ee90;
+}
+.calendar .week .day .shift .manager {
+  border: 1px solid #fff;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  padding: 2px;
+  margin: 2px;
+  float: left;
+  color: #fff;
+}
+.calendar .week .day .shift .available {
+  background-color: #008000;
+}
+.calendar .week .day .shift .not-available {
+  background-color: DarkRed;
+}
+.calendar .week .day .shift-alert {
+  background: #f08080;
+}
+.calendar .week .day .shift-ok {
+  background: #90ee90;
+}
