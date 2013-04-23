@@ -3,19 +3,50 @@ border-radius(n)
   -moz-border-radius n
   border-radius n
 
+box-shadow(l,t,w,c)
+  -webkit-box-shadow l t w c
+  -moz-box-shadow l t w c
+  box-shadow l t w c
+
 body
   padding: 0
   margin: 0
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif
 a
   color: #00B7FF
-.calendar
+  
+#nav
+  position: fixed
+  left: 0
+  right: 0
+  top: 0
+  padding: 1px
+  height: 48px
+  background-color: #d8e6df
+  box-shadow 0px 0px 8px #000
+  z-index: 2
+  img
+    float: left
+    margin: 1px
+  span
+    float: right
+    line-height: 48px
+    height: 48px
+    font-size: 24px
+    padding: 0px 16px
+
+#cal
+  position: absolute
+  top: 48px
+  left: 0
+  right: 0
   width: 100%
 
   .week
     float: left
     width: 100%
-    border-bottom: 1px solid #999
+    border-top: 1px solid #999;
+    padding-top: 1px;
 
     .wknbr,.day
        float:left
@@ -27,41 +58,59 @@ a
 
     .day
       width: 13.8%
-      border-left: 1px solid #FFF
-      margin-left: -1px
 
-      .dnbr
-        float: right
-
-      .name
-        float: left
+      .title
+        width: 100%
+        font-size: 10px
+        font-weight: bold
+        .dnbr
+          padding: 1px 3px
+          float: right
+        .name
+          padding: 1px 3px
+          float: left
 
       .shift
         clear: both
-        min-height: 64px
-        border-top: 1px solid #FFF
-      .red
-        background-color: lightsalmon
-      .orange
-        background-color: SandyBrown
-      .green
-        background-color: lightgreen
+        float: left
+        width: 100%
+        height: 72px;
+        border: 1px solid #FFF
+        margin: -1px
+      .shift.red
+        background-color: LightCoral
+      .shift.orange
+        background-color: Khaki
+      .shift.green
+        background-color: LightGreen
 
       .shift
+        .title
+          width: auto
+          float: left
+          font-size: 11px
+          background-color: #fff
+          padding: 1px 3px
+          color: #000
+          box-shadow: 1px 1px 1px #333
         .manager
-          border: 1px solid white
           border-radius(3px)
-          padding: 2px
-          margin: 2px
+          box-shadow: 1px 1px 1px #333
+          padding: 1px 3px
+          margin: 3px
           float: left
           color: white
-        .available
+          font-size: 12px
+          
+        .manager.available
           background-color: green
-        .not-available
+        .manager.not-available
           background-color: DarkRed
 
-      .shift-alert
-        background: lightcoral
-
-      .shift-ok
-        background: lightgreen
+@media screen and (max-width: 480px)
+  .wknbr,.day
+    width: 100% !important
+  .shift
+    height: auto !important
+  .day
+    border-top: 1px dotted #333 !important

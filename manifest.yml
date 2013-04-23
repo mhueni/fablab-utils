@@ -1,7 +1,7 @@
 ---
 applications:
   .:
-    name: timeshare
+    name: fablab-tools
     framework:
       name: node
       info:

@@ -1,7 +1,6 @@
 $(function() {
 	var CalendarView = Backbone.View.extend({
-		tagName : 'div',
-		className : 'calendar',
+		el : '#cal',
 		initialize : function() {
 			_.extend(this, this.options);
 			this.start = moment().hour(0).minute(0).second(0).add({
@@ -26,7 +25,7 @@ $(function() {
 		className : 'week',
 		initialize : function() {
 			_.extend(this, this.options);
-			this.$el.append('<div class="wknbr">' + this.start.format('w')
+			this.$el.append('<div class="wknbr">KW ' + this.start.format('w')
 					+ '</div>');
 			this.days = [];
 			var d = 0;
@@ -46,7 +45,7 @@ $(function() {
 				tagName : 'div',
 				className : 'day',
 				tpl : _
-						.template('<span class="name"><%= name %></span><span class="dnbr"><%= number %></span>'),
+						.template('<div class="title"><span class="name"><%= name %></span><span class="dnbr"><%= number %></span></div>'),
 				initialize : function() {
 					_.extend(this, this.options);
 					this.weekday = +this.start.format('d');
@@ -70,35 +69,71 @@ $(function() {
 					});
 				}
 			});
-	var ShiftView = Backbone.View.extend({
-		tagName : 'div',
-		className : 'shift',
-		initialize : function() {
-			_.extend(this, this.options);
-			var users = {};
-			_.each(this.shift.get('users'), function(user) {
-				users[user] = true;
+	var ShiftView = Backbone.View
+			.extend({
+				tagName : 'div',
+				className : 'shift',
+				events : {
+					'click' : 'addRemoveUser'
+				},
+				initialize : function() {
+					_.extend(this, this.options);
+					this.render();
+				},
+				render : function() {
+					this.$el.html('<span class="title">' + this.shift.get('hour') + '</span>');
+					var users = {};
+					_.each(this.shift.get('users'), function(user) {
+						users[user] = true;
+					});
+					this.exceptions = this.model.exceptions.where({
+						date : this.date.format('YYYY-MM-DD'),
+						hour : this.shift.get('hour')
+					});
+					if (this.exceptions) {
+						_.each(this.exceptions, function(exception) {
+							users[exception.get('user')] = exception
+									.get('available');
+						});
+					}
+					var userTpl = _
+							.template('<span class="manager <%= className%>"><%= plusMinus %> <%= name %></span>');
+					var $el = this.$el;
+					var totalUsers = 0;
+					_.each(users, function(available, user) {
+						if (available)
+							totalUsers++;
+						$el.append(userTpl({
+							name : user,
+							plusMinus : available ? '+' : '-',
+							className : available ? 'available'
+									: 'not-available'
+						}));
+					});
+					this.$el.attr('class', 'shift '
+							+ (totalUsers > 0 ? (totalUsers > 1 ? 'green'
+									: 'orange') : 'red'));
+				},
+				addRemoveUser : function() {
+					var exception = this.model.exceptions.where({
+						date : this.date.format('YYYY-MM-DD'),
+						hour : this.shift.get('hour'),
+						user : this.model.user.get('name')
+					});
+					if (exception.length) {
+						_.first(exception).destroy();
+					} else {
+						this.model.exceptions.add({
+							date : this.date.format('YYYY-MM-DD'),
+							hour : this.shift.get('hour'),
+							user : this.model.user.get('name'),
+							available : !_.contains(this.shift.get('users'),
+									this.model.user.get('name'))
+						})
+					}
+					this.render();
+				}
 			});
-			this.exceptions = this.model.exceptions.where({ date: this.date.format('YYYY-MM-DD'), hour: this.shift.get('hour') });
-			if (this.exceptions) {
-				_.each(this.exceptions, function(exception) {
-					users[exception.get('user')] = exception.get('available');
-				});
-			}
-			var userTpl = _.template('<div class="manager <%= className%>"><%= plusMinus %> <%= name %></div>');
-			var $el = this.$el;
-			var totalUsers = 0;
-			_.each(users, function(available, user) {
-				if (available) totalUsers++;
-				$el.append(userTpl({
-					name : user,
-					plusMinus : available ? '+' : '-',
-					className : available ? 'available' : 'not-available'
-				}));
-			});
-			this.$el.addClass(totalUsers > 0 ? (totalUsers > 1 ? 'green' : 'orange' ) : 'red');
-		}
-	});
 
 	var username = 'matthias';
 	var cal = new CalendarView({
@@ -108,7 +143,7 @@ $(function() {
 			})
 		})
 	});
-	$('body').prepend(cal.$el);
+//	$('body').prepend(cal.$el);
 	var i = 6;
 	while (i-- > 0) {
 		cal.addWeek();
