@@ -4,7 +4,7 @@ $(function() {
 		initialize : function() {
 			_.extend(this, this.options);
 			this.start = moment().hour(0).minute(0).second(0).add({
-				days : moment().format('d') - 4
+				days : -moment().format('d')
 			}); // first day of week
 			this.weeks = [];
 		},
@@ -23,10 +23,12 @@ $(function() {
 	var WeekView = Backbone.View.extend({
 		tagName : 'div',
 		className : 'week',
+		wknbrTmpl : _.template('<div class="wknbr">KW <%= wknbr %></div>'),
 		initialize : function() {
 			_.extend(this, this.options);
-			this.$el.append('<div class="wknbr">KW ' + this.start.format('w')
-					+ '</div>');
+			this.$el.append(this.wknbrTmpl({
+				wknbr : this.start.format('w')
+			}));
 			this.days = [];
 			var d = 0;
 			while (d++ < 7) {
@@ -74,47 +76,62 @@ $(function() {
 				tagName : 'div',
 				className : 'shift',
 				events : {
-					'click' : 'addRemoveUser'
+					'click' : 'addRemoveMe'
 				},
+				userTpl : _
+						.template('<span class="manager <%= className%>"><%= plusMinus %> <%= name %></span>'),
 				initialize : function() {
-					_.extend(this, this.options);
-					this.render();
+					var self = this;
+					_.extend(self, self.options);
+					self.model.exceptions.on('add', this.exceptionsChanged, this);
+					self.model.exceptions.on('remove', this.exceptionsChanged, this);
+					self.render();
 				},
 				render : function() {
-					this.$el.html('<span class="title">' + this.shift.get('hour') + '</span>');
+					var self = this;
+					var $el = this.$el;
+					$el.html('<span class="title">'
+							+ this.shift.get('hour') + '</span>');
 					var users = {};
 					_.each(this.shift.get('users'), function(user) {
-						users[user] = true;
+						users[user] = { 
+							className: 'available', 
+							plusMinus: '+', 
+							name: user 
+						};
 					});
-					this.exceptions = this.model.exceptions.where({
+					_.each(this.exceptions(), function(exception) {
+						var user = exception.get('user');
+						users[user] = users[user] || { name : user };
+						users[user].className = exception.get('available') ? 'available' : 'not-available';
+						users[user].plusMinus = exception.get('available') ? '+' : '-';
+					});
+					_.each(users, function(data, user) {
+						$el.append(self.userTpl(data));
+					});
+					var availableUsers = _.where(users, {
+						className : 'available'
+					}).length;
+					$el
+							.attr(
+									'class',
+									'shift '
+											+ (availableUsers > 0 ? (availableUsers > 1 ? 'green'
+													: 'orange')
+													: 'red'));
+				},
+				exceptions : function() {
+					return this.model.exceptions.where({
 						date : this.date.format('YYYY-MM-DD'),
 						hour : this.shift.get('hour')
 					});
-					if (this.exceptions) {
-						_.each(this.exceptions, function(exception) {
-							users[exception.get('user')] = exception
-									.get('available');
-						});
-					}
-					var userTpl = _
-							.template('<span class="manager <%= className%>"><%= plusMinus %> <%= name %></span>');
-					var $el = this.$el;
-					var totalUsers = 0;
-					_.each(users, function(available, user) {
-						if (available)
-							totalUsers++;
-						$el.append(userTpl({
-							name : user,
-							plusMinus : available ? '+' : '-',
-							className : available ? 'available'
-									: 'not-available'
-						}));
-					});
-					this.$el.attr('class', 'shift '
-							+ (totalUsers > 0 ? (totalUsers > 1 ? 'green'
-									: 'orange') : 'red'));
 				},
-				addRemoveUser : function() {
+				exceptionsChanged : function(e) {
+					if (e.attributes.date == this.date.format('YYYY-MM-DD') && e.attributes.hour == this.shift.get('hour')) {
+						this.render();
+					}
+				},
+				addRemoveMe : function() {
 					var exception = this.model.exceptions.where({
 						date : this.date.format('YYYY-MM-DD'),
 						hour : this.shift.get('hour'),
@@ -131,64 +148,33 @@ $(function() {
 									this.model.user.get('name'))
 						})
 					}
-					this.render();
+//					this.render();
 				}
 			});
 
 	var username = 'matthias';
-	var cal = new CalendarView({
-		model : new MyModels.AppModel({
-			user : new MyModels.User({
-				name : username
-			})
+	var socket = io.connect('/');
+	var model = new MyModels.AppModel({
+		user : new MyModels.User({
+			name : username
 		})
 	});
-//	$('body').prepend(cal.$el);
+	socket.on('exceptions', function(data) {
+		model.exceptions.update(data);
+	});
+	model.exceptions.on('all', function(e, m) {
+		switch(e) {
+		case 'add':
+		case 'destroy':
+			socket.emit(e, m.toJSON());
+		}
+	});
+	var cal = new CalendarView({
+		model : model
+	});
+	// $('body').prepend(cal.$el);
 	var i = 6;
 	while (i-- > 0) {
 		cal.addWeek();
 	}
-
-	// $body = $('body');
-	// $cal = $('<div id="calendar"/>');
-	// $body.append();
-	//
-	// $cal.start = moment().add(1 - moment().format('d'));
-	// var weeks = 6;
-	// while (weeks-- > 0) {
-	// $cal.pos = $cal.pos || $cal.start;
-	// var weeknbr = $cal.pos.format('w');
-	// var $week = $('<div class="week"/>');
-	// $week.append('<div class="weeknbr">' + weeknbr + '</div>');
-	// var shift, weekday, managers;
-	// for ( var d = 0; d < 7; d++) {
-	// weekday = $cal.pos.format('d');
-	// $day = $('<div class="weekday" id="'
-	// + $cal.pos.format('YYYY-MM-DD') + '">'
-	// + $cal.pos.format('ddd D') + '</div>');
-	// for (shift = 0; shift < 2; shift++) {
-	// $shift = $('<div id="' + $cal.pos.format('YYYY-MM-DD') + ':'
-	// + shift + '" class="shift shift-' + shift + '"></div>')
-	// if (managerWeekdayShifts[weekday]
-	// && managerWeekdayShifts[weekday][shift]) {
-	// managers = managerWeekdayShifts[weekday][shift][weeknbr % 2];
-	// if (managers) {
-	// managers = managers.split(',');
-	// $.each(managers, function(i, manager) {
-	// $shift.append('<span class="manager">' + manager
-	// + '</span>');
-	// });
-	// $shift.addClass(managers.length < 2 ? 'shift-alert'
-	// : 'shift-ok');
-	// }
-	// }
-	// $day.append($shift);
-	// }
-	// $week.append($day);
-	// $cal.pos = $cal.pos.add({
-	// days : 1
-	// });
-	// }
-	// $cal.append($week);
-	// }
 });

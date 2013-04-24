@@ -1,6 +1,8 @@
 (function() {
 	var server = false, MyModels;
 	if (typeof exports !== 'undefined') {
+		_ = underscore = require('underscore');
+		Backbone = require('./backbone-min.js');
 		MyModels = exports;
 		server = true;
 	} else {
@@ -92,32 +94,7 @@
 				week : 1,
 				users : [ 'andi', 'roman' ]
 			} ]);
-			this.exceptions = new MyModels.ExceptionCollection([ {
-				date : '2013-04-25',
-				hour: '17-21',
-				user : 'christoph',
-				available : false
-			}, {
-				date : '2013-04-25',
-				hour: '17-21',
-				user : 'matthias',
-				available : true
-			}, {
-				date : '2013-05-02',
-				hour: '13-17',
-				user : 'matthias',
-				available : false
-			}, {
-				date : '2013-04-02',
-				hour: '13-17',
-				user : 'christoph',
-				available : true
-			}, {
-				date : '2013-05-09',
-				hour: '13-17',
-				user : 'matthias',
-				available : false
-			} ]);
+			this.exceptions = new MyModels.ExceptionCollection();
 		}
 	});
 
@@ -133,6 +110,16 @@
 
 	MyModels.Exception = MyModels.BaseModel.extend({});
 	MyModels.ExceptionCollection = MyModels.BaseCollection.extend({
-		model : MyModels.Exception
+		model : MyModels.Exception,
+		update : function(data) {
+			var self = this;
+			if (_.isArray(data)) {
+				_.each(data, function(d) {
+					self.update(d);
+				});
+			} else if (this.where(data).length == 0) {
+				self.add(data);
+			}
+		}
 	});
 })();
