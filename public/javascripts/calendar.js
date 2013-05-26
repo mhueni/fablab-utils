@@ -1,6 +1,6 @@
 $(function() {
 
-	var username = 'matthias';
+	var username = 'ronnie';
 	var model = new MyModels.AppModel({
 		user : new MyModels.User({
 			name : username
@@ -21,7 +21,7 @@ $(function() {
 	socket.on('-exception', function(data) {
 		model.exceptions.remove(model.exceptions.findWhere(data));
 	});
-	
+
 	var CalendarView = Backbone.View.extend({
 		el : '#cal',
 		initialize : function() {
@@ -109,35 +109,46 @@ $(function() {
 				initialize : function() {
 					var self = this;
 					_.extend(self, self.options);
-					self.model.exceptions.on('add', this.exceptionsChanged, this);
-					self.model.exceptions.on('remove', this.exceptionsChanged, this);
+					self.model.exceptions.on('add', this.exceptionsChanged,
+							this);
+					self.model.exceptions.on('remove', this.exceptionsChanged,
+							this);
 					self.render();
 				},
 				render : function() {
 					var self = this;
 					var $el = this.$el;
-					$el.html('<span class="title">'
-							+ this.shift.get('hour') + '</span>');
+					$el.html('<span class="title">' + this.shift.get('hour')
+							+ '</span>');
 					var users = {};
 					_.each(this.shift.get('users'), function(user) {
-						users[user] = { 
-							className: 'available', 
-							plusMinus: '+', 
-							name: user 
+						users[user] = {
+							className : 'available',
+							plusMinus : '+',
+							name : user
 						};
 					});
-					_.each(this.exceptions(), function(exception) {
-						var user = exception.get('user');
-						users[user] = users[user] || { name : user };
-						users[user].className = exception.get('available') ? 'available' : 'not-available';
-						users[user].plusMinus = exception.get('available') ? '+' : '-';
-					});
-					_.each(users, function(data, user) {
-						$el.append(self.userTpl(data));
-					});
+					_.each(this.exceptions(),
+							function(exception) {
+								var user = exception.get('user');
+								users[user] = users[user] || {
+									name : user
+								};
+								users[user].className = exception
+										.get('available') ? 'available'
+										: 'not-available';
+								users[user].plusMinus = exception
+										.get('available') ? '+' : '-';
+							});
 					var availableUsers = _.where(users, {
 						className : 'available'
 					}).length;
+					_.each(users, function(data, user) {
+						if (user == self.model.user.get('name')) {
+							data.className += ' me';
+						}
+						$el.append(self.userTpl(data));
+					});
 					$el
 							.attr(
 									'class',
@@ -153,7 +164,8 @@ $(function() {
 					});
 				},
 				exceptionsChanged : function(e) {
-					if (e.attributes.date == this.date.format('YYYY-MM-DD') && e.attributes.hour == this.shift.get('hour')) {
+					if (e.attributes.date == this.date.format('YYYY-MM-DD')
+							&& e.attributes.hour == this.shift.get('hour')) {
 						this.render();
 					}
 				},
@@ -177,14 +189,14 @@ $(function() {
 				}
 			});
 
-//	model.exceptions.on('all', function(e, m) {
-//		switch (e) {
-//		case 'add':
-//		case 'remove':
-//			socket.emit('exception', {
-//				action : e,
-//				model : m.toJSON()
-//			});
-//		}
-//	});
+	// model.exceptions.on('all', function(e, m) {
+	// switch (e) {
+	// case 'add':
+	// case 'remove':
+	// socket.emit('exception', {
+	// action : e,
+	// model : m.toJSON()
+	// });
+	// }
+	// });
 });

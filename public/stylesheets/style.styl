@@ -11,7 +11,7 @@ box-shadow(l,t,w,c)
 body
   padding: 0
   margin: 0
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif
+  font: 16px "Lucida Grande", Helvetica, Arial, sans-serif
 a
   color: #00B7FF
   
@@ -95,17 +95,26 @@ a
           box-shadow: 1px 1px 1px #333
         .manager
           border-radius(3px)
-          box-shadow: 1px 1px 1px #333
+          border: 1px solid #333
           padding: 1px 3px
           margin: 3px
           float: left
-          color: white
           font-size: 12px
-          
+
         .manager.available
-          background-color: green
+          background-color: LightGreen
         .manager.not-available
-          background-color: DarkRed
+          background-color: LightCoral
+
+        .manager.me
+          border: 1px solid #FFF
+          box-shadow: 1px 1px 1px #333
+          color: white
+          font-weight: bold
+        .manager.available.me
+          background-color: Green
+        .manager.not-available.me
+          background-color: DarkRed !important
 
 @media screen and (max-width: 480px)
   .wknbr,.day
