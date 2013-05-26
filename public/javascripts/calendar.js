@@ -1,4 +1,27 @@
 $(function() {
+
+	var username = 'matthias';
+	var model = new MyModels.AppModel({
+		user : new MyModels.User({
+			name : username
+		})
+	});
+
+	var socket = io.connect('/');
+	socket.on('model', function(data) {
+		model.shifts.reset(data.shifts);
+		model.exceptions.reset(data.exceptions);
+		new CalendarView({
+			model : model
+		});
+	});
+	socket.on('+exception', function(data) {
+		model.exceptions.add(data);
+	});
+	socket.on('-exception', function(data) {
+		model.exceptions.remove(model.exceptions.findWhere(data));
+	});
+	
 	var CalendarView = Backbone.View.extend({
 		el : '#cal',
 		initialize : function() {
@@ -7,6 +30,9 @@ $(function() {
 				days : -moment().format('d')
 			}); // first day of week
 			this.weeks = [];
+			for (i = 0; i < 7; i++) {
+				this.addWeek();
+			}
 		},
 		addWeek : function() {
 			this.end = this.end || this.start.clone();
@@ -138,43 +164,27 @@ $(function() {
 						user : this.model.user.get('name')
 					});
 					if (exception.length) {
-						_.first(exception).destroy();
+						socket.emit('-exception', _.first(exception));
 					} else {
-						this.model.exceptions.add({
+						socket.emit('+exception', {
 							date : this.date.format('YYYY-MM-DD'),
 							hour : this.shift.get('hour'),
 							user : this.model.user.get('name'),
 							available : !_.contains(this.shift.get('users'),
 									this.model.user.get('name'))
-						})
+						});
 					}
-//					this.render();
 				}
 			});
 
-	var username = 'matthias';
-	var socket = io.connect('/');
-	var model = new MyModels.AppModel({
-		user : new MyModels.User({
-			name : username
-		})
-	});
-	socket.on('exceptions', function(data) {
-		model.exceptions.update(data);
-	});
-	model.exceptions.on('all', function(e, m) {
-		switch(e) {
-		case 'add':
-		case 'destroy':
-			socket.emit(e, m.toJSON());
-		}
-	});
-	var cal = new CalendarView({
-		model : model
-	});
-	// $('body').prepend(cal.$el);
-	var i = 6;
-	while (i-- > 0) {
-		cal.addWeek();
-	}
+//	model.exceptions.on('all', function(e, m) {
+//		switch (e) {
+//		case 'add':
+//		case 'remove':
+//			socket.emit('exception', {
+//				action : e,
+//				model : m.toJSON()
+//			});
+//		}
+//	});
 });

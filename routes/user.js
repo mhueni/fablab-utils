@@ -1,8 +1,12 @@
-
 /*
  * GET users listing.
  */
 
-exports.list = function(req, res){
-  res.send("respond with a resource");
+var passport = require('passport');
+
+exports.login = function(req, res) {
+	passport.authenticate('local', {
+		successRedirect : '/',
+		failureRedirect : '/error'
+	});
 };

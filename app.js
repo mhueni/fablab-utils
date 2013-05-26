@@ -2,18 +2,18 @@
  * Module dependencies.
  */
 
-var express = require('express'), 
-	app = express(), 
-	http = require('http'),
-	server = http.createServer(app), 
-	io = require('socket.io').listen(server), 
+var env = process.env.NODE_ENV || 'development',
 	path = require('path'), 
-	routes = require('./routes'), 
-	user = require('./routes/user'),
-	MyModels = require('./public/javascripts/model.js');
+	express = require('express'),
+	app = express(), 
+	server = require('http').createServer(app), 
+	io = require('socket.io').listen(server),
+	config = require('./config/config'),
+	model = require('./model/model'),
+	routes = require('./routes');
 
 // all environments
-app.set('port', process.env.PORT || 3000);
+app.set('port', config.server.port);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 app.use(express.favicon());
@@ -32,51 +32,20 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', routes.index);
-// app.get('/users', user.list);
-
-var model = new MyModels.AppModel;
-model.exceptions.add([ {
-	date : '2013-04-24',
-	hour : '17-21',
-	user : 'ronnie',
-	available : false
-}, {
-	date : '2013-04-25',
-	hour : '17-21',
-	user : 'christoph',
-	available : false
-}, {
-	date : '2013-04-25',
-	hour : '17-21',
-	user : 'matthias',
-	available : true
-}, {
-	date : '2013-05-02',
-	hour : '13-17',
-	user : 'matthias',
-	available : false
-}, {
-	date : '2013-04-02',
-	hour : '13-17',
-	user : 'christoph',
-	available : true
-}, {
-	date : '2013-05-09',
-	hour : '13-17',
-	user : 'matthias',
-	available : false
-} ]);
 
 io.sockets.on('connection', function(socket) {
-	socket.emit('exceptions', model.exceptions);
-	socket.on('add', function(data) {
-		model.exceptions.add(new MyModels.Exception(data));
-		io.sockets.emit('exceptions', model.exceptions);
+	socket.emit('model', model);
+	socket.on('+exception', function(data) {
+		model.addException(data, function(model) {
+			socket.emit('+exception', model);
+			socket.broadcast.emit('+exception', model);
+		});
 	});
-	socket.on('destroy', function(data) {
-		var models = model.exceptions.where(data);
-		_.each(models, function(m) { m.destroy(); });
-		io.sockets.emit('exceptions', model.exceptions);
+	socket.on('-exception', function(data) {
+		model.removeException(data, function(model) {
+			socket.emit('-exception', model);
+			socket.broadcast.emit('-exception', model);
+		});
 	});
 });
 
