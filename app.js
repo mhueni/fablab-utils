@@ -8,9 +8,10 @@ var env = process.env.NODE_ENV || 'development',
 	app = express(), 
 	server = require('http').createServer(app), 
 	io = require('socket.io').listen(server),
-	config = require('./config/config'),
-	model = require('./model/model'),
-	routes = require('./routes');
+	routes = require('./routes'),
+	config = require('./server/config'),
+	model = require('./server/model'),
+	auth = require('./server/auth');
 
 // all environments
 app.set('port', config.server.port);
@@ -20,8 +21,9 @@ app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
-app.use(express.cookieParser('your secret here'));
+app.use(express.cookieParser('fablab-tools'));
 app.use(express.session());
+app.use(auth.middleware());
 app.use(app.router);
 app.use(require('stylus').middleware(__dirname + '/public'));
 app.use(express.static(path.join(__dirname, 'public')));
