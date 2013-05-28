@@ -82,10 +82,6 @@ a {
   font-size: 12px;
   font-weight: bold;
 }
-#cal .week .day .title .dnbr {
-  padding: 1px 3px;
-  float: right;
-}
 #cal .week .day .title .name {
   padding: 1px 3px;
   float: left;

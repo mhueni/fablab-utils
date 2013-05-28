@@ -77,7 +77,7 @@ $(function() {
 				tagName : 'div',
 				className : 'day',
 				tpl : _
-						.template('<div class="title"><span class="name"><%= name %></span><span class="dnbr"><%= number %></span></div>'),
+						.template('<div class="title"><span class="name"><%= name %> <%= number %></span></div>'),
 				initialize : function() {
 					_.extend(this, this.options);
 					this.weekday = +this.start.format('d');

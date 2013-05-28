@@ -4,7 +4,7 @@ block content
   #nav
     img(src='/images/logo.png')
     if req.user
-      h1 User: #{req.user}
+      h1 #{req.user}
       a.login(href="/logout") Logout
     else
       h1 Lab Manager Tools
