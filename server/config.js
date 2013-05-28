@@ -15,15 +15,17 @@ var config = module.exports = {
 		appSecret : 'ad5a263a3f8ff5684a0c4edabced8826'
 	},
 	google : {
-		clientId : '241419624203.apps.googleusercontent.com',
-		clientSecret : 'O25lHE6lm_KHbWP9xtlyLFUZ'
+		clientId : '604413965285-p6j4kmgh567g9gsecvlml3md0orjminq.apps.googleusercontent.com',
+		clientSecret : '58KybjoELfov7_duFhaIwtfp'
 	}
 }
 
 // appfog
 if (process.env.VCAP_SERVICES) {
-	config.server.name = 'fablab-tools.eu01.aws.af.cm';
 	var env = JSON.parse(process.env.VCAP_SERVICES);
+	config.server.name = 'fablab-tools.eu01.aws.af.cm';
+	config.google.clientId = '604413965285.apps.googleusercontent.com';
+	config.google.clientSecret = '9NhYiDbMrYn3dznvIP9967FD';
 	config.mongodb = env['mongodb-1.8'][0]['credentials'];
 }
 

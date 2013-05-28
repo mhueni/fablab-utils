@@ -41,11 +41,8 @@ app.get('/', function(req, res) {
 	});
 });
 
-app.get('/auth/facebook', passport.authenticate('facebook'));
-app.get('/auth/facebook/callback', passport.authenticate('facebook', {
-	successRedirect : '/',
-	failureRedirect : '/?fb_error'
-}));
+//app.get('/auth/:provider', passport.auth);
+app.get('/auth/:provider/:callback?', passport.auth);
 
 io.sockets.on('connection', function(socket) {
 	socket.emit('model', model);
