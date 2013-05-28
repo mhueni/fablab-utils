@@ -6,9 +6,9 @@ applications:
       name: node
       info:
         mem: 64M
-        description: Node.js Application
+        description: FabLab Manager Tools
         exec: 
     infra: eu-aws
     url: ${name}.${target-base}
-    mem: 64M
+    mem: 128M
     instances: 1
