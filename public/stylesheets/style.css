@@ -30,12 +30,15 @@ a {
   font-size: 24px;
   padding: 0px 16px;
 }
+#nav span.user,
 #nav a.login {
   float: right;
   padding: 4px 8px;
   line-height: 26px;
-  border: 1px solid #999;
   margin: 4px;
+}
+#nav a.login {
+  border: 1px solid #999;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
@@ -43,9 +46,11 @@ a {
   color: #666;
 }
 #nav a.login img {
-  padding: 0px 8px 0 0;
   width: 24px;
   height: 24px;
+}
+#nav a.login span {
+  padding: 0px 0px 0 8px;
 }
 #cal {
   position: absolute;
@@ -153,5 +158,8 @@ a {
   }
   .day {
     border-top: 1px dotted #999 !important;
+  }
+  a.login span {
+    display: none;
   }
 }

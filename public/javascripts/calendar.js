@@ -1,26 +1,30 @@
 $(function() {
 
-	var username = 'ronnie';
-	var model = new MyModels.AppModel({
-		user : new MyModels.User({
-			name : username
-		})
-	});
-
-	var socket = io.connect('/');
-	socket.on('model', function(data) {
-		model.shifts.reset(data.shifts);
-		model.exceptions.reset(data.exceptions);
-		new CalendarView({
-			model : model
+	var username = $('#cal').attr('user');
+	if (username) {
+		var model = new MyModels.AppModel({
+			user : new MyModels.User({
+				name : username
+			})
 		});
-	});
-	socket.on('+exception', function(data) {
-		model.exceptions.add(data);
-	});
-	socket.on('-exception', function(data) {
-		model.exceptions.remove(model.exceptions.findWhere(data));
-	});
+
+		var socket = io.connect('/');
+		socket.on('model', function(data) {
+			model.shifts.reset(data.shifts);
+			model.exceptions.reset(data.exceptions);
+			if (model.user) {
+				new CalendarView({
+					model : model
+				});
+			}
+		});
+		socket.on('+exception', function(data) {
+			model.exceptions.add(data);
+		});
+		socket.on('-exception', function(data) {
+			model.exceptions.remove(model.exceptions.findWhere(data));
+		});
+	}
 
 	var CalendarView = Backbone.View.extend({
 		el : '#cal',

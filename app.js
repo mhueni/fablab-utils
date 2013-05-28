@@ -42,6 +42,10 @@ app.get('/', function(req, res) {
 });
 
 app.get('/auth/:provider/:callback?', passport.auth);
+app.get('/logout', function(req, res) {
+	req.logout();
+	res.redirect('/');
+});
 
 io.sockets.on('connection', function(socket) {
 	socket.emit('model', model);
