@@ -11,8 +11,8 @@ var config = module.exports = {
 		db : 'fablab-tools'
 	},
 	facebook : {
-		appId : '333343110060582',
-		appSecret : 'ad5a263a3f8ff5684a0c4edabced8826'
+		appId : '626868220675702',
+		appSecret : '45dec6513fc919717bbeb88651f10619'
 	},
 	google : {
 		clientId : '604413965285-p6j4kmgh567g9gsecvlml3md0orjminq.apps.googleusercontent.com',
