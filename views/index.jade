@@ -3,11 +3,11 @@ extends layout
 block content
   #nav
     img(src='/images/logo.png')
-    h1 Lab Manager Tools
     if req.user
+      h1 User: #{req.user}
       a.login(href="/logout") Logout
-      span.user Welcome #{req.user}
     else
+      h1 Lab Manager Tools
       a.login(href="/auth/google")
         img(src="/images/google.png",width=32) 
         span Google Sign-in 
