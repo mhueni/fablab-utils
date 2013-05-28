@@ -41,7 +41,6 @@ app.get('/', function(req, res) {
 	});
 });
 
-//app.get('/auth/:provider', passport.auth);
 app.get('/auth/:provider/:callback?', passport.auth);
 
 io.sockets.on('connection', function(socket) {

@@ -3,9 +3,12 @@ extends layout
 block content
   #nav
     img(src='/images/logo.png')
-    span Lab Manager Tools
-    span Login 
-      a(href="/auth/google") Google 
-      a(href="/auth/facebook") Facebook
+    h1 Lab Manager Tools
+    a.login(href="/auth/google")
+      img(src="/images/google.png",width=32) 
+      span Google Sign-in 
+    a.login(href="/auth/facebook") 
+      img(src="/images/facebook.png") 
+      span Facebook Sign-in
     span= JSON.stringify(req.user)
   #cal
