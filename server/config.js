@@ -1,6 +1,7 @@
 var config = module.exports = {
 	server : {
-		port : process.env.PORT || 3000
+		port : process.env.PORT || 3000,
+		name : 'localhost:3000'
 	},
 	mongodb : {
 		username : 'root',
@@ -21,6 +22,7 @@ var config = module.exports = {
 
 // appfog
 if (process.env.VCAP_SERVICES) {
+	config.server.name = 'fablab-tools.eu01.aws.af.cm';
 	var env = JSON.parse(process.env.VCAP_SERVICES);
 	config.mongodb = env['mongodb-1.8'][0]['credentials'];
 }

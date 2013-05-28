@@ -1,4 +1,5 @@
-var everyauth = require('everyauth'), config = require('./config');
+var everyauth = module.exports = require('everyauth'), 
+	config = require('./config');
 
 var usersById = {};
 var nextUserId = 0;
@@ -25,7 +26,6 @@ var usersByFbId = {};
 everyauth.facebook.appId(config.facebook.appId).appSecret(
 		config.facebook.appSecret).findOrCreateUser(
 		function(session, accessToken, accessTokenExtra, fbUserMetadata) {
-			console.log(fbUserMetadata);
 			return usersByFbId[fbUserMetadata.id]
 					|| (usersByFbId[fbUserMetadata.id] = addUser('facebook',
 							fbUserMetadata));
@@ -39,7 +39,6 @@ everyauth.google
 				'https://www.googleapis.com/auth/userinfo.profile https://www.google.com/m8/feeds/')
 		.findOrCreateUser(
 				function(sess, accessToken, extra, googleUser) {
-					console.log(googleUser);
 					googleUser.refreshToken = extra.refresh_token;
 					googleUser.expiresIn = extra.expires_in;
 					return usersByGoogleId[googleUser.id]
@@ -47,4 +46,3 @@ everyauth.google
 									'google', googleUser));
 				}).redirectPath('/');
 
-module.exports = everyauth;

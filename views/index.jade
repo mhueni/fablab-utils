@@ -7,4 +7,5 @@ block content
     span Login 
       a(href="/auth/google") Google 
       a(href="/auth/facebook") Facebook
+    span= JSON.stringify(req.user)
   #cal
