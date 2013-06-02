@@ -3,15 +3,13 @@ extends layout
 block content
   #nav
     img(src='/images/logo.png')
-    if req.user
-      h1 #{req.user}
+    if user
+      h1 #{user.email}
       a.login(href="/logout") Logout
     else
       h1 Lab Manager Tools
-      a.login(href="/auth/google")
-        img(src="/images/google.png",width=32) 
-        span Google Sign-in 
-      a.login(href="/auth/facebook") 
-        img(src="/images/facebook.png") 
-        span Facebook Sign-in
-  #cal(user=req.user)
+      a.login(href="/auth/basecamp")
+        img(src="/images/basecamp.png",width=32) 
+        span Sign in
+  if user
+    #cal(user=user.email)

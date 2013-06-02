@@ -27,8 +27,8 @@ a {
   float: left;
   line-height: 48px;
   height: 48px;
-  font-size: 24px;
-  padding: 0px 16px;
+  font-size: 18px;
+  padding: 0px 8px;
 }
 #nav span.user,
 #nav a.login {
